@@ -1,6 +1,6 @@
 Flask==2.3.3
 opencv-python==4.8.1.78
 numpy==1.24.3
-tensorflow==2.19.0
+tensorflow
 mediapipe
 scikit-learn==1.3.0
