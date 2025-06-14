@@ -19,7 +19,7 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 # Load the trained model
-model = load_model('hand_gesture_model.h5')
+model = load_model('hand_gesture_model.h5' ,compile=False)
 
 # Define gesture classes
 gesture_classes = [str(i) for i in range(10)] + [chr(i) for i in range(ord('a'), ord('z') + 1)]
