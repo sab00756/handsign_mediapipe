@@ -186,7 +186,7 @@
         <h1>HAND GESTURE RECOGNITION</h1>
         
         <div class="video-container">
-            <video id="video-stream" autoplay playsinline></video>
+            <img id="video-stream" src="/video_feed" alt="Video Stream">
         </div>
         
         <div class="gesture-display">
@@ -224,16 +224,6 @@
    
     <script>
         let gestureUpdateInterval;
-         const video = document.getElementById('video-stream');
-
-        navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            video.srcObject = stream;
-        })
-        .catch((err) => {
-            console.error('Error accessing camera:', err);
-            alert('Unable to access camera. Please allow permission.');
-        });
         
         // Function to update current gesture
         function updateGesture() {
@@ -261,7 +251,7 @@
             const currentSrc = videoStream.src;
             videoStream.src = '';
             setTimeout(() => {
-                videoStream.src = currentSrc + '?t=' + new Date().getTime();
+                videoStream.src = '/video_feed?t=' + new Date().getTime();
             }, 100);
             updateStatus('Stream refreshed');
         }
@@ -301,7 +291,7 @@
             gestureUpdateInterval = setInterval(updateGesture, 500); // Update every 500ms
         });
         
-        // Handle video stream errors
+        // Handle image stream errors
         document.getElementById('video-stream').onerror = function() {
             updateStatus('Video stream error - check camera connection');
         };
