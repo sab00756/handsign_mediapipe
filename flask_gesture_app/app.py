@@ -161,8 +161,9 @@ def stop_camera():
     return jsonify({'status': 'Camera stopped'})
 
 if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))  # Use PORT env from Render
     try:
-        app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+        app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
     except KeyboardInterrupt:
         print("Shutting down...")
     finally:
