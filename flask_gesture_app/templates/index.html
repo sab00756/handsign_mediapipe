@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Gesture Recognition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+             font-family: "Helvetica Neue", sans-serif;
+            background: black;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: beige;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: black;
+             font-family: "Helvetica Neue", sans-serif;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        i{
+            font-size: 25px;
+            padding: 5px;
+        }
+        a{
+            color: black;
+        }
+        
+        .video-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        #video-stream {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .gesture-display {
+            background: black;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .gesture-display:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gesture-text {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .gesture-value {
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: black;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: black;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .instructions li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions li:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .gesture-value {
+                font-size: 2.5em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        .inst_text{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <div class="container">
+        <h1>HAND GESTURE RECOGNITION</h1>
+        
+        <div class="video-container">
+            <img id="video-stream" src="/video_feed" alt="Video Stream">
+        </div>
+        
+        <div class="gesture-display">
+            <div class="gesture-text">Current Gesture:</div>
+            <div class="gesture-value" id="current-gesture">None</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="refreshStream()">🔄 Refresh Stream</button>
+            <button class="btn btn-secondary" onclick="stopCamera()">⏹️ Stop Camera</button>
+        </div>
+        
+        <div class="status" id="status">
+            Status: Camera active
+        </div>
+        
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <ul>
+                <li>• Position your hand clearly in front of the camera</li>
+                <li>• Make sure your hand is well-lit and visible</li>
+                <li>• Hold the gesture steady for 1.5 seconds for recognition</li>
+                <li>• Supported gestures: Numbers (0-9) and Letters (a-z)</li>
+                <li>• The system detects one hand at a time</li>
+            </ul>
+        </div>
+         <div class="instructions">
+        <a href="https://github.com/sab00756/handsign_mediapipe">
+        <div class="inst_text" href="https://github.com/sab00756/handsign_mediapipe">
+            View source code on Gitub <i class="fab fa-github"></i>
+        </div>
+        </a>
+    </div>
+    </div>
+   
+    <script>
+        let gestureUpdateInterval;
+        
+        // Function to update current gesture
+        function updateGesture() {
+            fetch('/current_gesture')
+                .then(response => response.json())
+                .then(data => {
+                    const gestureElement = document.getElementById('current-gesture');
+                    if (data.gesture) {
+                        gestureElement.textContent = data.gesture;
+                        gestureElement.style.color = '#fff';
+                    } else {
+                        gestureElement.textContent = 'None';
+                        gestureElement.style.color = '#ccc';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching gesture:', error);
+                    document.getElementById('current-gesture').textContent = 'Error';
+                });
+        }
+        
+        // Function to refresh video stream
+        function refreshStream() {
+            const videoStream = document.getElementById('video-stream');
+            const currentSrc = videoStream.src;
+            videoStream.src = '';
+            setTimeout(() => {
+                videoStream.src = currentSrc + '?t=' + new Date().getTime();
+            }, 100);
+            updateStatus('Stream refreshed');
+        }
+        
+        // Function to stop camera
+        function stopCamera() {
+            fetch('/stop_camera')
+                .then(response => response.json())
+                .then(data => {
+                    updateStatus(data.status);
+                    document.getElementById('video-stream').src = '';
+                    document.getElementById('current-gesture').textContent = 'Camera Stopped';
+                    clearInterval(gestureUpdateInterval);
+                })
+                .catch(error => {
+                    console.error('Error stopping camera:', error);
+                    updateStatus('Error stopping camera');
+                });
+        }
+        
+        // Function to update status
+        function updateStatus(message) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = 'Status: ' + message;
+            statusElement.style.background = 'rgba(46, 204, 113, 0.1)';
+            statusElement.style.borderColor = '#2ecc71';
+            
+            setTimeout(() => {
+                statusElement.style.background = 'rgba(52, 152, 219, 0.1)';
+                statusElement.style.borderColor = '#3498db';
+            }, 2000);
+        }
+        
+        // Start gesture updates when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGesture();
+            gestureUpdateInterval = setInterval(updateGesture, 500); // Update every 500ms
+        });
+        
+        // Handle video stream errors
+        document.getElementById('video-stream').onerror = function() {
+            updateStatus('Video stream error - check camera connection');
+        };
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', function() {
+            clearInterval(gestureUpdateInterval);
+        });
+    </script>
+</body>
+</html>
